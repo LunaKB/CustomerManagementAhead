@@ -1,10 +1,19 @@
 <resources>
     <string name="app_name">Customer Management</string>
-    <string name="login_success">Login Successful</string>
-    <string name="login_fail">Login Unsuccessful</string>
+    <string name="image_description">Notepad logo</string>
+
+    <!-- Username and Password-->
     <string name="enter_username">Username</string>
     <string name="enter_password">Password</string>
+    <string name="hint_username">Enter username here</string>
+    <string name="hint_password">Enter password here</string>
     <string name="username">jdoe</string>
     <string name="password">welcome1</string>
+
+
+    <!-- Login -->
     <string name="login_button">Log In</string>
+    <string name="login_success">Login Successful</string>
+    <string name="login_fail">Login Unsuccessful</string>
+
 </resources>
