@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#FF9E24</color>
     <color name="colorAccent">#FFF06C</color>
     <color name="background">#787fed</color>
+    <color name="image_background">#808080</color>
+    <color name="gesture_background">#FFFFFF</color>
+    <color name="gesture_signature">#000000</color>
 </resources>
