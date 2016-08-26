@@ -3,9 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
     <android.gesture.GestureOverlayView
+        android:id="@+id/add_session_complete_gestureoverlay"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_margin="10dp"
@@ -19,8 +21,12 @@
     </android.gesture.GestureOverlayView>
 
     <Button
+        android:id="@+id/session_complete_submit_payment_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:layout_gravity="center_horizontal"
-        android:text="Submit Payment"/>
+        android:text="@string/submit_payment"
+        android:background="@color/colorAccent"/>
 </LinearLayout>

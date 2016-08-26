@@ -10,10 +10,51 @@
     <string name="username">jdoe</string>
     <string name="password">welcome1</string>
 
-
     <!-- Login -->
     <string name="login_button">Log In</string>
     <string name="login_success">Login Successful</string>
     <string name="login_fail">Login Unsuccessful</string>
 
+    <!-- Menu -->
+    <string name="view_sessions">View Sessions</string>
+    <string name="view_customers">View Customers</string>
+
+    <!-- Add customer -->
+    <string name="customer_image">Picture of customer</string>
+    <string name="image_button">Button to take picture of customer</string>
+    <string name="customer_name">Customer Name</string>
+    <string name="customer_name_hint">Name</string>
+    <string name="billing_information">Billing Information</string>
+    <string name="billing_information_hint">123 Example Road\nNowhere, UP 12345</string>
+    <string name="number_of_sessions">Number of Sessions</string>
+    <string name="placeholder_number">0</string>
+    <string name="number_of_sessions_button">Change Number of Sessions</string>
+    <string name="save_customer_button">Save Customer</string>
+    <string name="saved_toast">Customer Saved</string>
+    <string name="delete_customer_button">Delete Customer</string>
+
+    <!-- Customer List Menu -->
+    <string name="new_customer">New Customer</string>
+
+    <!-- Add session -->
+    <string name="change_customer">Change Customer</string>
+    <string name="session_description">Session description here</string>
+    <string name="save_session_button">Save\nSession</string>
+    <string name="delete_session_button">Delete\nSession</string>
+    <string name="complete_session_button">Complete\nSession</string>
+
+    <!-- Session List Menu -->
+    <string name="new_session">New Session</string>
+
+    <!-- Dialogs -->
+    <string name="customer_list_dialog">Customer List</string>
+    <string name="date_picker_dialog">Set the Date</string>
+    <string name="time_picker_dialog">Set the Time</string>
+
+    <!-- Session Complete -->
+    <string name="submit_payment">Submit Payment</string>
+
+    <!-- Customer Image -->
+    <string name="no_image">No Photo Available</string>
+    <string name="yes_image">Customer Photo</string>
 </resources>

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,16 +18,13 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/add_session_imageview"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:background="@color/image_background"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"
+                android:contentDescription="@string/customer_image"/>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Change\nCustomer"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,35 +34,49 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Customer Name"
+                android:text="@string/customer_name"
                 android:layout_marginTop="10dp"
                 style="?android:listSeparatorTextViewStyle"/>
 
             <TextView
+                android:id="@+id/add_session_customer_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
-                android:text="John Doe" />
+                android:layout_marginEnd="10dp"
+                tools:text="John Doe"
+                android:textSize="20sp"/>
+
+            <Button
+                android:id="@+id/add_session_change_customer_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/change_customer"
+                android:background="@color/colorAccent"/>
         </LinearLayout>
     </LinearLayout>
-    <LinearLayout
+          <Button
+            android:id="@+id/add_session_date_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            tools:text="10/13/2016"
+            android:background="@color/colorAccent"/>
+
+        <Button
+            android:id="@+id/add_session_time_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            tools:text="11:30 AM"
+            android:background="@color/colorAccent"/>
+    <EditText
+        android:id="@+id/add_session_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp">
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="10/3/2016"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="11:30 AM"/>
-    </LinearLayout>
-    <LinearLayout
+        android:layout_margin="10dp"
+        android:hint="@string/session_description"/>
+<!--    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -71,22 +84,30 @@
         android:layout_marginRight="10dp">
 
         <Button
+            android:id="@+id/add_session_save_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Save\nSession"/>
+            android:layout_marginRight="10dp"
+            android:text="@string/save_session_button"
+            android:background="@color/colorAccent"/>
 
         <Button
+            android:id="@+id/add_session_delete_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Delete\nSession"/>
+            android:text="@string/delete_session_button"
+            android:background="@color/colorAccent"/>
 
         <Button
+            android:id="@+id/add_session_complete_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Complete\nSession"/>
-    </LinearLayout>
+            android:layout_marginLeft="10dp"
+            android:text="@string/complete_session_button"
+            android:background="@color/colorAccent"/>
+    </LinearLayout> -->
 
 </LinearLayout>

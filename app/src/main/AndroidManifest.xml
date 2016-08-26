@@ -3,6 +3,7 @@
           package="com.bignerdranch.android.customermanagement">
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:allowBackup="true"
@@ -16,6 +17,25 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".AddCustomerPagerActivity"
+                  android:label="@string/username"
+            android:parentActivityName=".CustomerListActivity">
+        </activity>
+        <activity android:name=".CustomerListActivity"
+                  android:label="@string/username"
+            android:parentActivityName=".MenuActivity">
+        </activity>
+        <activity android:name=".MenuActivity"
+                  android:label="@string/username">
+        </activity>
+        <activity android:name=".SessionListActivity"
+                  android:label="@string/username"
+                  android:parentActivityName=".MenuActivity">
+        </activity>
+        <activity android:name=".AddSessionPagerActivity"
+            android:label="@string/username"
+            android:parentActivityName=".SessionListActivity">
         </activity>
     </application>
 
