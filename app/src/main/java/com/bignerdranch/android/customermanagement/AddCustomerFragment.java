@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -41,12 +42,10 @@ public class AddCustomerFragment extends Fragment {
 
     /* Image Taking and Saving */
     private ImageView mCustomerImage;
+    private int mWidth;
+    private int mHeight;
     private ImageButton mImageButton;
     private File mImageFile;
-
-    /* Customer Saving and Deleting */
-    private Button mSaveCustomer;
-    private Button mDeleteCustomer;
 
     public static AddCustomerFragment newInstance(UUID customerId){
         Bundle args = new Bundle();
@@ -109,7 +108,17 @@ public class AddCustomerFragment extends Fragment {
         });
 
         mCustomerImage = (ImageView)v.findViewById(R.id.add_customer_imageview);
-        updatePhotoView();
+        final ViewTreeObserver observer = mCustomerImage.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mWidth = mCustomerImage.getWidth();
+                mHeight = mCustomerImage.getHeight();
+                updatePhotoView(mWidth, mHeight);
+                mCustomerImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+
         mCustomerImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,19 +131,6 @@ public class AddCustomerFragment extends Fragment {
             }
         });
 
-/*        mSaveCustomer = (Button)v.findViewById(R.id.add_customer_save_button);
-        mSaveCustomer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCustomer.setCustomerName(mCustomerName.getText().toString());
-                mCustomer.setBillingInfo(mBillingInfo.getText().toString());
-                mCustomer.setSessionLimit(Integer.valueOf(mSessions.getText().toString()));
-                Toast.makeText(getActivity(), R.string.saved_toast, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        mDeleteCustomer = (Button)v.findViewById(R.id.add_customer_delete_button); */
-
         return v;
     }
 
@@ -145,11 +141,9 @@ public class AddCustomerFragment extends Fragment {
         }
 
         if(requestCode == REQUEST_PHOTO){
-            updatePhotoView();
+            updatePhotoView(mWidth, mHeight);
         }
-        else if(requestCode == REQUEST_IMAGE_DIALOG){
-
-        }
+        else if(requestCode == REQUEST_IMAGE_DIALOG){}
     }
 
     @Override
@@ -176,12 +170,12 @@ public class AddCustomerFragment extends Fragment {
         }
     }
 
-    private void updatePhotoView(){
+    private void updatePhotoView(int width, int height){
         if(mImageFile == null || !mImageFile.exists()){
             mCustomerImage.setImageDrawable(null);
         }
         else {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(mImageFile.getPath(), getActivity());
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mImageFile.getPath(), width, height);
             mCustomerImage.setImageBitmap(bitmap);
         }
     }

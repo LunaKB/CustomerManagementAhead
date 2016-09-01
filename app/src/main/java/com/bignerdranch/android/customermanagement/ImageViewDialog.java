@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -19,6 +20,8 @@ public class ImageViewDialog extends DialogFragment{
     private static final String ARG_BOOLEAN = "boolean";
     private static final String ARG_FILE = "file";
     private ImageView mImageView;
+    private int mWidth;
+    private int mHeight;
 
     public static ImageViewDialog newInstance(Drawable drawable, File path){
         Bundle args = new Bundle();
@@ -38,11 +41,43 @@ public class ImageViewDialog extends DialogFragment{
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
-        File path = (File)getArguments().getSerializable(ARG_FILE);
+        final File path = (File)getArguments().getSerializable(ARG_FILE);
         Boolean bool = (Boolean)getArguments().getBoolean(ARG_BOOLEAN);
 
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_imageview, null);
         mImageView = (ImageView)v.findViewById(R.id.dialog_imageview);
+        final ViewTreeObserver observer = mImageView.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mWidth = mImageView.getWidth();
+                mHeight = mImageView.getHeight();
+
+                if(mHeight == 0){
+                    mHeight = mWidth;
+                }
+
+                Bitmap bitmap = PictureUtils.getScaledBitmap(path.getPath(), mWidth, mHeight);
+                mImageView.setImageBitmap(bitmap);
+                mImageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+        observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mWidth = mImageView.getWidth();
+                mHeight = mImageView.getHeight();
+
+                if(mHeight == 0){
+                    mHeight = mWidth;
+                }
+
+                Bitmap bitmap = PictureUtils.getScaledBitmap(path.getPath(), mWidth, mHeight);
+                mImageView.setImageBitmap(bitmap);
+                mImageView.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
 
         if(bool){
             mImageView.setImageDrawable(null);
@@ -52,15 +87,11 @@ public class ImageViewDialog extends DialogFragment{
                     .setPositiveButton(android.R.string.ok, null)
                     .create();
         }
-        else {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(path.getPath(), getActivity());
-            mImageView.setImageBitmap(bitmap);
-        }
+            return new AlertDialog.Builder(getActivity())
+                    .setView(v)
+                    .setTitle(R.string.yes_image)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .create();
 
-        return new AlertDialog.Builder(getActivity())
-                .setView(v)
-                .setTitle(R.string.yes_image)
-                .setPositiveButton(android.R.string.ok, null)
-                .create();
     }
 }

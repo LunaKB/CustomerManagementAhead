@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -104,14 +105,33 @@ public class SessionListFragment extends Fragment {
             Customer customer = CustomerListManager.get(getActivity()).getCustomer(mSession.getCustomerID());
 
             if(customer != null) {
-                File f = CustomerListManager.get(getActivity()).getPhotoFile(customer);
+                final File f = CustomerListManager.get(getActivity()).getPhotoFile(customer);
                 if (f == null || !f.exists()) {
                     mCustomerImage.setImageDrawable(null);
                 } else {
-                    Bitmap bitmap = PictureUtils.getScaledBitmap(f.getPath(), getActivity());
-                    mCustomerImage.setImageBitmap(bitmap);
+                    final ViewTreeObserver observer = mCustomerImage.getViewTreeObserver();
+                    observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            int width = mCustomerImage.getWidth();
+                            int height = mCustomerImage.getHeight();
+                            Bitmap bitmap = PictureUtils.getScaledBitmap(f.getPath(), width, height);
+                            mCustomerImage.setImageBitmap(bitmap);
+                            mCustomerImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                    });
+                    observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                        @Override
+                        public boolean onPreDraw() {
+                            int width = mCustomerImage.getWidth();
+                            int height = mCustomerImage.getHeight();
+                            Bitmap bitmap = PictureUtils.getScaledBitmap(f.getPath(), width, height);
+                            mCustomerImage.setImageBitmap(bitmap);
+                            mCustomerImage.getViewTreeObserver().removeOnPreDrawListener(this);
+                            return true;
+                        }
+                    });
                 }
-
                 mCustomerName.setText(CustomerListManager.get(getActivity()).getCustomer(mSession.getCustomerID()).getCustomerName());
             }
             mSessionDate.setText(mSession.getDate().toString());

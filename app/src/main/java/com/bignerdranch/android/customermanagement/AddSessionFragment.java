@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ShareCompat;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,11 +14,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.io.File;
@@ -33,23 +34,36 @@ public class AddSessionFragment extends Fragment {
     private static final String DIALOG_IMAGE = "image_dialog";
     private static final String DIALOG_DATE = "DialogDate";
     private static final String DIALOG_TIME = "DialogTime";
+    private static final String DIALOG_SIG = "DialogSignature";
     private static final int REQUEST_CUSTOMER = 0;
     private static final int REQUEST_IMAGE_DIALOG = 1;
     private static final int REQUEST_DATE = 2;
     private static final int REQUEST_TIME = 3;
+    private static final int REQUEST_SIG = 4;
     private Session mSession;
     private Customer mCustomer;
 
     /* Customer Info */
     private ImageView mCustomerImage;
+    private int mWidth;
+    private int mHeight;
     private TextView mCustomerName;
     private File mImageFile;
     private Button mChangeCustomer;
 
     /* Session Info */
     private Button mDate;
+    private Date InstanceDate;
     private Button mTime;
     private EditText mDescription;
+
+    /* Complete Session */
+    private Button mCompleteSession;
+    private File mSigFile;
+    private ImageView mSignature;
+    private int mSigWidth;
+    private int mSigHeight;
+    private Button mPayment;
 
     public static AddSessionFragment newInstance(UUID sessionId){
         Bundle args = new Bundle();
@@ -68,6 +82,8 @@ public class AddSessionFragment extends Fragment {
         UUID sessionId = (UUID) getArguments().getSerializable(ARG_SESSION_ID);
         mSession = SessionListManager.get(getActivity()).getSession(sessionId);
         mCustomer = CustomerListManager.get(getActivity()).getCustomer(mSession.getCustomerID());
+        InstanceDate = new Date(mSession.getDate().getTime());
+        mSigFile = SessionListManager.get(getActivity()).getPhotoFile(mSession);
 
         if(mCustomer != null) {
             mImageFile = CustomerListManager.get(getActivity()).getPhotoFile(mCustomer);
@@ -85,7 +101,17 @@ public class AddSessionFragment extends Fragment {
 
         /* Customer Info */
         mCustomerImage = (ImageView)v.findViewById(R.id.add_session_imageview);
-        updatePhotoView();
+        final ViewTreeObserver observer = mCustomerImage.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mWidth = mCustomerImage.getWidth();
+                mHeight = mCustomerImage.getHeight();
+                updatePhotoView(mWidth, mHeight);
+                mCustomerImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+
         mCustomerImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,7 +148,7 @@ public class AddSessionFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentManager fragmentManager = getFragmentManager();
-                DatePickerDialog dialog = DatePickerDialog.newInstance(mSession.getDate());
+                DatePickerDialog dialog = DatePickerDialog.newInstance(InstanceDate);
 
                 dialog.setTargetFragment(AddSessionFragment.this, REQUEST_DATE);
                 dialog.show(fragmentManager, DIALOG_DATE);
@@ -135,7 +161,7 @@ public class AddSessionFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentManager fragmentManager = getFragmentManager();
-                TimePickerDialog dialog = TimePickerDialog.newInstance(mSession.getDate());
+                TimePickerDialog dialog = TimePickerDialog.newInstance(InstanceDate);
 
                 dialog.setTargetFragment(AddSessionFragment.this, REQUEST_TIME);
                 dialog.show(fragmentManager, DIALOG_TIME);
@@ -144,6 +170,38 @@ public class AddSessionFragment extends Fragment {
 
         mDescription = (EditText)v.findViewById(R.id.add_session_description);
         mDescription.setText(mSession.getDescription());
+
+        /* Complete Session */
+        mCompleteSession = (Button)v.findViewById(R.id.add_session_complete_button);
+        mCompleteSession.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSignature.setVisibility(View.GONE);
+                mPayment.setVisibility(View.GONE);
+
+                FragmentManager fragmentManager = getFragmentManager();
+                SessionCompleteDialog dialog = SessionCompleteDialog.newInstance(mSession.getId());
+
+                dialog.setTargetFragment(AddSessionFragment.this, REQUEST_SIG);
+                dialog.show(fragmentManager, DIALOG_SIG);
+            }
+        });
+
+        mSignature = (ImageView)v.findViewById(R.id.add_session_signature_imageview);
+
+        mPayment = (Button)v.findViewById(R.id.session_complete_submit_payment_button);
+        mPayment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = ShareCompat.IntentBuilder.from(getActivity())
+                        .setType("text/plain")
+                        .setText(getSessionReport())
+                        .setSubject(getString(R.string.session_report_subject))
+                        .setChooserTitle(R.string.send_report)
+                        .createChooserIntent();
+                startActivity(i);
+            }
+        });
 
         return v;
     }
@@ -161,21 +219,43 @@ public class AddSessionFragment extends Fragment {
                 mCustomer = CustomerListManager.get(getActivity()).getCustomer(customerId);
                 mCustomerName.setText(mCustomer.getCustomerName());
                 mImageFile = CustomerListManager.get(getActivity()).getPhotoFile(mCustomer);
-                updatePhotoView();
+                updatePhotoView(mWidth, mHeight);
             }
         }
-        else if(requestCode == REQUEST_IMAGE_DIALOG){
-
-        }
+        else if(requestCode == REQUEST_IMAGE_DIALOG){}
         else if(requestCode == REQUEST_DATE){
             Date date = (Date) data.getSerializableExtra(DatePickerDialog.EXTRA_DATE);
-            mSession.setDay(date.getDate(), date.getMonth(), date.getYear());
+            InstanceDate.setDate(date.getDate());
+            InstanceDate.setMonth(date.getMonth());
+            InstanceDate.setYear(date.getYear());
             updateDate();
         }
         else if(requestCode == REQUEST_TIME){
             Date date = (Date) data.getSerializableExtra(TimePickerDialog.EXTRA_TIME);
-            mSession.setTime(date.getHours(), date.getMinutes());
+            InstanceDate.setHours(date.getHours());
+            InstanceDate.setMinutes(date.getMinutes());
             updateTime();
+        }
+        else if(requestCode == REQUEST_SIG){
+            int success = (int)data.getIntExtra(SessionCompleteDialog.EXTRA_SUCCESS, 0);
+            if(success == 0){
+                mSignature.setVisibility(View.GONE);
+                mPayment.setVisibility(View.GONE);
+            }
+            else if(success == 1){
+                mSignature.setVisibility(View.VISIBLE);
+                final ViewTreeObserver sigObserver = mSignature.getViewTreeObserver();
+                sigObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        mSigWidth = mSignature.getWidth();
+                        mSigHeight = mSignature.getHeight();
+                        mSigFile = SessionListManager.get(getActivity()).getPhotoFile(mSession);
+                        updateSignatureView(mSigWidth, mSigHeight);
+                        mSignature.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                });
+            }
         }
     }
 
@@ -186,13 +266,14 @@ public class AddSessionFragment extends Fragment {
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
-        /* Customer Saving and Deleting */
+        /* Session Saving and Deleting */
         switch (item.getItemId()){
             case R.id.menu_item_save_session:
                 mSession.setDescription(mDescription.getText().toString());
                 if(mCustomer != null) {
                     mSession.setCustomerID(mCustomer.getID());
                 }
+                mSession.setDate(InstanceDate);
                 Toast.makeText(getActivity(), R.string.saved_toast, Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.menu_item_delete_session:
@@ -204,25 +285,72 @@ public class AddSessionFragment extends Fragment {
         }
     }
 
-    private void updatePhotoView(){
+    private void updatePhotoView(int width, int height){
         if(mImageFile == null || !mImageFile.exists()){
             mCustomerImage.setImageDrawable(null);
         }
         else {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(mImageFile.getPath(), getActivity());
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mImageFile.getPath(), width, height);
             mCustomerImage.setImageBitmap(bitmap);
         }
     }
 
+    private void updateSignatureView(int width, int height){
+        Bitmap bitmap = PictureUtils.getScaledBitmap(mSigFile.getPath(), width, height);
+        mSignature.setImageBitmap(bitmap);
+        mPayment.setVisibility(View.VISIBLE);
+    }
+
     private void updateDate() {
-        Date date = mSession.getDate();
-        String formatDate = DateFormat.getDateFormat(getActivity()).format(date);
-        mDate.setText(formatDate);
+        String dateFormat = "EEE, MMM dd yyyy";
+        String formatDate = DateFormat.format(dateFormat, InstanceDate).toString();
+        String date = getString(
+                R.string.date_button,
+                formatDate
+        );
+        mDate.setText(date);
     }
 
     private void updateTime(){
-        Date date = mSession.getDate();
-        String formatTime = date.getHours() + ":" + date.getMinutes();
-        mTime.setText(formatTime);
+        String hour = "";
+        String timeOfDay = "";
+        if(InstanceDate.getHours() == 0){
+            hour = "12";
+            timeOfDay = "AM";
+        }
+        else if(InstanceDate.getHours() == 12){
+            hour = "12";
+            timeOfDay = "PM";
+        }
+        else if(InstanceDate.getHours() > 12){
+            hour = Integer.toString(InstanceDate.getHours() - 12);
+            timeOfDay = "PM";
+        }
+        else {
+            hour = Integer.toString(InstanceDate.getHours());
+            timeOfDay = "AM";
+        }
+        String formatTime = hour + ":" + InstanceDate.getMinutes() + " " + timeOfDay;
+
+        String time = getString(
+                R.string.time_button,
+                formatTime
+        );
+        mTime.setText(time);
+    }
+
+    private String getSessionReport(){
+
+        String dateFormat = "EEE, MMM dd yyyy";
+        String dateString = DateFormat.format(dateFormat, mSession.getDate()).toString();
+
+        String report = getString(
+                R.string.session_report,
+                mCustomer.getCustomerName(),
+                mCustomer.getBillingInfo(),
+                dateString,
+                mDescription.getText().toString());
+
+        return report;
     }
 }

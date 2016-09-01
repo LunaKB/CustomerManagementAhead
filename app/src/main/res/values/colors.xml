@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FFBE6C</color>
-    <color name="colorPrimaryDark">#FF9E24</color>
-    <color name="colorAccent">#FFF06C</color>
-    <color name="background">#787fed</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="background">#FFFFFF</color>
+    <color name="background_pressed">#F0F0F0</color>
     <color name="image_background">#808080</color>
-    <color name="gesture_background">#FFFFFF</color>
     <color name="gesture_signature">#000000</color>
 </resources>

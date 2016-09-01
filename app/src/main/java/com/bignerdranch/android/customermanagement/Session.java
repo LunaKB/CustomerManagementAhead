@@ -60,4 +60,8 @@ public class Session {
     public void setCustomerID(UUID customerID) {
         mCustomerID = customerID;
     }
+
+    public String getPhotoFilename(){
+        return "IMG_" + getId().toString() + ".jpg";
+    }
 }

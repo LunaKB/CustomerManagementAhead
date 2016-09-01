@@ -39,9 +39,11 @@
     <!-- Add session -->
     <string name="change_customer">Change Customer</string>
     <string name="session_description">Session description here</string>
-    <string name="save_session_button">Save\nSession</string>
-    <string name="delete_session_button">Delete\nSession</string>
-    <string name="complete_session_button">Complete\nSession</string>
+    <string name="save_session_button">Save Session</string>
+    <string name="delete_session_button">Delete Session</string>
+    <string name="complete_session_button">Complete Session</string>
+    <string name="date_button">Change Date: %1$s</string>
+    <string name="time_button">Change Time: %1$s</string>
 
     <!-- Session List Menu -->
     <string name="new_session">New Session</string>
@@ -53,6 +55,9 @@
 
     <!-- Session Complete -->
     <string name="submit_payment">Submit Payment</string>
+    <string name="session_report">%1$s\n%2$s\nThe session was completed on %3$s.\nSession Summary:\n%4$s</string>
+    <string name="session_report_subject">Customer Management Session Report</string>
+    <string name="send_report">Send report via</string>
 
     <!-- Customer Image -->
     <string name="no_image">No Photo Available</string>

@@ -4,11 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 
 import com.bignerdranch.android.customermanagement.database.SessionBaseHelper;
 import com.bignerdranch.android.customermanagement.database.SessionCursorWrapper;
 import com.bignerdranch.android.customermanagement.database.SessionDbSchema.SessionTable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -90,6 +92,16 @@ public class SessionListManager {
         finally {
             cursor.close();
         }
+    }
+
+    public File getPhotoFile(Session session){
+        File externalFilesDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        if(externalFilesDir == null){
+            return null;
+        }
+
+        return new File(externalFilesDir, session.getPhotoFilename());
     }
 
     /* SQLiteDatabase Methods */

@@ -10,14 +10,11 @@ import android.graphics.Point;
  * Created by Chaz-Rae on 8/24/2016.
  */
 public class PictureUtils {
-    public static Bitmap getScaledBitmap(String path, Activity activity){
-        Point size = new Point();
-        activity.getWindowManager().getDefaultDisplay().getSize(size);
-
-        return rotateBitmap(getScaledBitmap(path, size.x, size.y));
+    public static Bitmap getScaledBitmap(String path, int width, int height){
+        return rotateBitmap(scaleBitmap(path, width, height));
     }
 
-    public static Bitmap getScaledBitmap(String path, int destWidth, int destHeight){
+    public static Bitmap scaleBitmap(String path, int destWidth, int destHeight){
         // Read in dimensions of the image on disk
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;

@@ -24,14 +24,14 @@
                 <ImageView
                     android:id="@+id/add_session_imageview"
                     android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_height="110dp"
                     android:background="@color/image_background"
                     android:layout_margin="10dp"
                     android:contentDescription="@string/customer_image"/>
 
             </LinearLayout>
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
@@ -59,24 +59,33 @@
                     android:text="@string/change_customer"
                     android:theme="@style/MyButton"/>
             </LinearLayout>
-        </LinearLayout>
-              <Button
-                android:id="@+id/add_session_date_button"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:textColor="#FFFFFF"
-                tools:text="10/13/2016"
-                android:theme="@style/MyButton"/>
+                android:orientation="vertical">
 
-            <Button
-                android:id="@+id/add_session_time_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:textColor="#FFFFFF"
-                tools:text="11:30 AM"
-                android:theme="@style/MyButton"/>
+                <Button
+                    android:id="@+id/add_session_date_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="#FFFFFF"
+                    tools:text="10/13/2016"
+                    android:theme="@style/MyButton"/>
+
+                <Button
+                    android:id="@+id/add_session_time_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="#FFFFFF"
+                    tools:text="11:30 AM"
+                    android:theme="@style/MyButton"/>
+            </LinearLayout>
+        </LinearLayout>
         <EditText
             android:id="@+id/add_session_description"
             android:layout_width="match_parent"
@@ -90,6 +99,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
             android:textColor="#FFFFFF"
             android:text="@string/complete_session_button"
             android:theme="@style/MyButton"/>

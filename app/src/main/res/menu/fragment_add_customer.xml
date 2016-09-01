@@ -6,12 +6,14 @@
     <item
         android:id="@+id/menu_item_save_customer"
         android:orderInCategory="1"
+        android:icon="@drawable/ic_save"
         android:title="@string/save_customer_button"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom|withText"/>
 
     <item
         android:id="@+id/menu_item_delete_customer"
         android:orderInCategory="2"
+        android:icon="@drawable/ic_delete"
         android:title="@string/delete_customer_button"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom|withText"/>
 </menu>
