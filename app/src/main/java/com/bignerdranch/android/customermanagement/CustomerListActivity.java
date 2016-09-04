@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Activity to show CustomerListFragment
  */
 public class CustomerListActivity extends SingleFragmentActivity {
 

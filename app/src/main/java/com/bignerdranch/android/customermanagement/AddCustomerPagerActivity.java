@@ -14,6 +14,10 @@ import java.util.UUID;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Activity to slide left or right to view
+ * other AddCustomerFragments
+ *
+ * Coded from Android Programming: The Big Nerd Ranch Guide 2nd Edition
  */
 public class AddCustomerPagerActivity extends AppCompatActivity{
     private static final String EXTRA_CUSTOMER_ID =

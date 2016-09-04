@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -18,12 +17,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Dialog for user to choose a customer
+ * from the list of existing customers.
+ * Handling for case of no customer chosen included.
+ *
+ * Uses Picasso for image handling
+ *  http://square.github.io/picasso/
  */
 public class CustomerListDialog extends DialogFragment {
     public static final String EXTRA_CUSTOMER =
@@ -120,8 +127,10 @@ public class CustomerListDialog extends DialogFragment {
                     public void onGlobalLayout() {
                         int width = mCustomerImage.getWidth();
                         int height = mCustomerImage.getHeight();
-                        Bitmap bitmap = PictureUtils.getScaledBitmap(f.getPath(), width, height);
-                        mCustomerImage.setImageBitmap(bitmap);
+                        Picasso.with(getActivity())
+                                .load(f)
+                                .resize(width, height)
+                                .into(mCustomerImage);
                         mCustomerImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
                 });
@@ -130,8 +139,10 @@ public class CustomerListDialog extends DialogFragment {
                     public boolean onPreDraw() {
                         int width = mCustomerImage.getWidth();
                         int height = mCustomerImage.getHeight();
-                        Bitmap bitmap = PictureUtils.getScaledBitmap(f.getPath(), width, height);
-                        mCustomerImage.setImageBitmap(bitmap);
+                        Picasso.with(getActivity())
+                                .load(f)
+                                .resize(width, height)
+                                .into(mCustomerImage);
                         mCustomerImage.getViewTreeObserver().removeOnPreDrawListener(this);
                         return true;
                     }

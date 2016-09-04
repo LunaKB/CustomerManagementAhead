@@ -4,6 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_item_log_out"
+        android:icon="@drawable/ic_log_out"
+        android:title="@string/menu_item_logout"
+        app:showAsAction="ifRoom|withText"/>
+    <item
         android:id="@+id/menu_item_new_session"
         android:icon="@drawable/ic_session_list_add"
         android:title="@string/new_session"

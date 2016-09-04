@@ -10,6 +10,9 @@ import java.util.UUID;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Gets values from customer database
+ *
+ * Coded from Android Programming: The Big Nerd Ranch Guide 2nd Edition
  */
 public class CustomerCursorWrapper extends CursorWrapper{
     public CustomerCursorWrapper(Cursor cursor){

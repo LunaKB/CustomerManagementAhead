@@ -17,6 +17,9 @@ import java.util.GregorianCalendar;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Dialog for user to set a date.
+ *
+ * Coded from Android Programming: The Big Nerd Ranch Guide 2nd Edition
  */
 public class DatePickerDialog extends DialogFragment {
     public static final String EXTRA_DATE =

@@ -11,6 +11,9 @@ import java.util.UUID;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Gets values from session database
+ *
+ * Coded from Android Programming: The Big Nerd Ranch Guide 2nd Edition
  */
 public class SessionCursorWrapper extends CursorWrapper {
     public SessionCursorWrapper(Cursor cursor){

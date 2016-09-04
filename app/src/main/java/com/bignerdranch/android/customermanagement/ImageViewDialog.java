@@ -11,10 +11,16 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Dialog to view a larger version of the selected image.
+ *
+ * Uses Picasso for image handling
+ *  http://square.github.io/picasso/
  */
 public class ImageViewDialog extends DialogFragment{
     private static final String ARG_BOOLEAN = "boolean";
@@ -42,10 +48,20 @@ public class ImageViewDialog extends DialogFragment{
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
         final File path = (File)getArguments().getSerializable(ARG_FILE);
-        Boolean bool = (Boolean)getArguments().getBoolean(ARG_BOOLEAN);
+        Boolean bool = getArguments().getBoolean(ARG_BOOLEAN);
 
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_imageview, null);
         mImageView = (ImageView)v.findViewById(R.id.dialog_imageview);
+
+        if(bool){
+            mImageView.setImageDrawable(null);
+            return new AlertDialog.Builder(getActivity())
+                    .setView(v)
+                    .setTitle(R.string.no_image)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .create();
+        }
+
         final ViewTreeObserver observer = mImageView.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -57,8 +73,10 @@ public class ImageViewDialog extends DialogFragment{
                     mHeight = mWidth;
                 }
 
-                Bitmap bitmap = PictureUtils.getScaledBitmap(path.getPath(), mWidth, mHeight);
-                mImageView.setImageBitmap(bitmap);
+                Picasso.with(getActivity())
+                        .load(path)
+                        .resize(mWidth, mHeight)
+                        .into(mImageView);
                 mImageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
@@ -72,26 +90,19 @@ public class ImageViewDialog extends DialogFragment{
                     mHeight = mWidth;
                 }
 
-                Bitmap bitmap = PictureUtils.getScaledBitmap(path.getPath(), mWidth, mHeight);
-                mImageView.setImageBitmap(bitmap);
+                Picasso.with(getActivity())
+                        .load(path)
+                        .resize(mWidth, mHeight)
+                        .into(mImageView);
                 mImageView.getViewTreeObserver().removeOnPreDrawListener(this);
                 return true;
             }
         });
 
-        if(bool){
-            mImageView.setImageDrawable(null);
-            return new AlertDialog.Builder(getActivity())
-                    .setView(v)
-                    .setTitle(R.string.no_image)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .create();
-        }
-            return new AlertDialog.Builder(getActivity())
-                    .setView(v)
-                    .setTitle(R.string.yes_image)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .create();
-
+        return new AlertDialog.Builder(getActivity())
+                .setView(v)
+                .setTitle(R.string.yes_image)
+                .setPositiveButton(android.R.string.ok, null)
+                .create();
     }
 }

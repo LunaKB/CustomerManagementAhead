@@ -5,6 +5,7 @@ import java.util.UUID;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Class for all session information
  */
 public class Session {
     private UUID mCustomerID = UUID.fromString("f17fdff3-c273-4ee2-adbd-147141d123e8");
@@ -39,18 +40,6 @@ public class Session {
 
     public void setDate(Date date) {
         mDate = date;
-    }
-
-    public void setDay(int day, int month, int year){
-        mDate.setDate(day);
-        mDate.setMonth(month);
-        mDate.setYear(year);
-    }
-
-    public void setTime(int hour, int minute){
-        mDate.setHours(hour);
-        mDate.setMinutes(minute);
-        mDate.setSeconds(0);
     }
 
     public UUID getCustomerID() {

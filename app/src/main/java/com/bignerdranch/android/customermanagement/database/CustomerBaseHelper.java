@@ -8,6 +8,9 @@ import com.bignerdranch.android.customermanagement.database.CustomerDbSchema.Cus
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Customer database creator
+ *
+ * Coded from Android Programming: The Big Nerd Ranch Guide 2nd Edition
  */
 public class CustomerBaseHelper extends SQLiteOpenHelper {
     private static final int VERSION = 1;

@@ -14,6 +14,10 @@ import java.util.UUID;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Activity to slide left or right to view
+ * other AddSessionFragments
+ *
+ * Coded from Android Programming: The Big Nerd Ranch Guide 2nd Edition
  */
 public class AddSessionPagerActivity extends AppCompatActivity {
     private static final String EXTRA_SESSION_ID =

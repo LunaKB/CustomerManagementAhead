@@ -17,6 +17,7 @@ import java.util.UUID;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Class to manage session list using SQLite database
  */
 public class SessionListManager {
     private static SessionListManager sSessionList;

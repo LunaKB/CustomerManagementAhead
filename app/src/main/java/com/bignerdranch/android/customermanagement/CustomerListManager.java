@@ -17,6 +17,9 @@ import java.util.UUID;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Manages list of customers using an SQLite Database
+ *
+ * Coded from Android Programming: The Big Nerd Ranch Guide 2nd Edition
  */
 public class CustomerListManager {
     private static CustomerListManager sCustomerList;
@@ -34,7 +37,6 @@ public class CustomerListManager {
     private CustomerListManager(Context context){
         mContext = context.getApplicationContext();
         mDatabase = new CustomerBaseHelper(mContext).getWritableDatabase();
-
     }
 
     /* Add, delete, update */

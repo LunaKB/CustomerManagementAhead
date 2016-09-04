@@ -8,6 +8,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+/**
+ * Activity to log in user.
+ * Username: jdoe
+ * Password: welcome1
+ * Case-sensitive
+ */
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText mUsername;

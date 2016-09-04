@@ -17,6 +17,7 @@ import java.util.GregorianCalendar;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Dialog for user to pick time.
  */
 public class TimePickerDialog extends DialogFragment {
     private final static String ARG_TIME = "time";

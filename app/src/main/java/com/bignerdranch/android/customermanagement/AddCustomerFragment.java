@@ -3,7 +3,6 @@ package com.bignerdranch.android.customermanagement;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,17 +15,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
 import java.util.UUID;
 
-/**
+/*
  * Created by Chaz-Rae on 8/24/2016.
+ * Fragment to view and save or delete customer image,
+ * name, billing information, and number of sessions.
+ *
+ * Uses Picasso for image handling
+ *  http://square.github.io/picasso/
  */
 public class AddCustomerFragment extends Fragment {
     private static final String ARG_CUSTOMER_ID = "customer_id";
@@ -89,12 +94,11 @@ public class AddCustomerFragment extends Fragment {
 
         /* Image Taking and Saving */
         mImageButton = (ImageButton)v.findViewById(R.id.add_customer_imagebutton);
-        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
+        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         boolean canTakePhoto =
                 mImageFile != null && captureImage.resolveActivity(packageManager) != null;
         mImageButton.setEnabled(canTakePhoto);
-
         if(canTakePhoto){
             Uri uri = Uri.fromFile(mImageFile);
             captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
@@ -114,7 +118,11 @@ public class AddCustomerFragment extends Fragment {
             public void onGlobalLayout() {
                 mWidth = mCustomerImage.getWidth();
                 mHeight = mCustomerImage.getHeight();
-                updatePhotoView(mWidth, mHeight);
+                Picasso.with(getActivity())
+                        .load(mImageFile)
+                        .resize(mWidth, mHeight)
+                        .into(mCustomerImage);
+
                 mCustomerImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
@@ -141,9 +149,15 @@ public class AddCustomerFragment extends Fragment {
         }
 
         if(requestCode == REQUEST_PHOTO){
-            updatePhotoView(mWidth, mHeight);
+            Picasso.with(getActivity()).invalidate(mImageFile);
+            Picasso.with(getActivity())
+                    .load(mImageFile)
+                    .resize(mWidth, mHeight)
+                    .into(mCustomerImage);
         }
-        else if(requestCode == REQUEST_IMAGE_DIALOG){}
+        else if(requestCode == REQUEST_IMAGE_DIALOG){
+            /* Do nothing */
+        }
     }
 
     @Override
@@ -163,20 +177,11 @@ public class AddCustomerFragment extends Fragment {
                 return true;
             case R.id.menu_item_delete_customer:
                 CustomerListManager.get(getActivity()).deleteCustomer(mCustomer, mImageFile);
+                Toast.makeText((getActivity()), R.string.deleted_toast, Toast.LENGTH_SHORT).show();
                 getActivity().finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void updatePhotoView(int width, int height){
-        if(mImageFile == null || !mImageFile.exists()){
-            mCustomerImage.setImageDrawable(null);
-        }
-        else {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(mImageFile.getPath(), width, height);
-            mCustomerImage.setImageBitmap(bitmap);
         }
     }
 }

@@ -2,6 +2,9 @@ package com.bignerdranch.android.customermanagement.database;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Customer database table and column names
+ *
+ * Coded from Android Programming: The Big Nerd Ranch Guide 2nd Edition
  */
 public class CustomerDbSchema {
     public static final class CustomerTable{

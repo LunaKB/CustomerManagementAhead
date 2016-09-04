@@ -2,7 +2,6 @@ package com.bignerdranch.android.customermanagement;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,12 +20,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
 import java.util.Date;
 import java.util.UUID;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Fragment to view and save or delete
+ * customer image and name; session
+ * date, time, and description; and
+ * customer signature.
+ * Also sends receipt through and intent.
+ *
+ * Uses Picasso for image handling
+ *  http://square.github.io/picasso/
  */
 public class AddSessionFragment extends Fragment {
     private static final String ARG_SESSION_ID = "session_id";
@@ -63,7 +72,7 @@ public class AddSessionFragment extends Fragment {
     private ImageView mSignature;
     private int mSigWidth;
     private int mSigHeight;
-    private Button mPayment;
+    private Button mReceipt;
 
     public static AddSessionFragment newInstance(UUID sessionId){
         Bundle args = new Bundle();
@@ -96,6 +105,7 @@ public class AddSessionFragment extends Fragment {
         SessionListManager.get(getActivity()).updateSession(mSession);
     }
 
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View v = inflater.inflate(R.layout.fragment_add_session, null);
 
@@ -107,7 +117,10 @@ public class AddSessionFragment extends Fragment {
             public void onGlobalLayout() {
                 mWidth = mCustomerImage.getWidth();
                 mHeight = mCustomerImage.getHeight();
-                updatePhotoView(mWidth, mHeight);
+                Picasso.with(getActivity())
+                        .load(mImageFile)
+                        .resize(mWidth, mHeight)
+                        .into(mCustomerImage);
                 mCustomerImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
@@ -177,7 +190,7 @@ public class AddSessionFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mSignature.setVisibility(View.GONE);
-                mPayment.setVisibility(View.GONE);
+                mReceipt.setVisibility(View.GONE);
 
                 FragmentManager fragmentManager = getFragmentManager();
                 SessionCompleteDialog dialog = SessionCompleteDialog.newInstance(mSession.getId());
@@ -189,15 +202,15 @@ public class AddSessionFragment extends Fragment {
 
         mSignature = (ImageView)v.findViewById(R.id.add_session_signature_imageview);
 
-        mPayment = (Button)v.findViewById(R.id.session_complete_submit_payment_button);
-        mPayment.setOnClickListener(new View.OnClickListener() {
+        mReceipt = (Button)v.findViewById(R.id.session_complete_submit_receipt_button);
+        mReceipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = ShareCompat.IntentBuilder.from(getActivity())
                         .setType("text/plain")
                         .setText(getSessionReport())
-                        .setSubject(getString(R.string.session_report_subject))
-                        .setChooserTitle(R.string.send_report)
+                        .setSubject(getString(R.string.session_receipt_subject))
+                        .setChooserTitle(R.string.send_receipt)
                         .createChooserIntent();
                 startActivity(i);
             }
@@ -219,7 +232,10 @@ public class AddSessionFragment extends Fragment {
                 mCustomer = CustomerListManager.get(getActivity()).getCustomer(customerId);
                 mCustomerName.setText(mCustomer.getCustomerName());
                 mImageFile = CustomerListManager.get(getActivity()).getPhotoFile(mCustomer);
-                updatePhotoView(mWidth, mHeight);
+                Picasso.with(getActivity())
+                        .load(mImageFile)
+                        .resize(mWidth, mHeight)
+                        .into(mCustomerImage);
             }
         }
         else if(requestCode == REQUEST_IMAGE_DIALOG){}
@@ -240,7 +256,7 @@ public class AddSessionFragment extends Fragment {
             int success = (int)data.getIntExtra(SessionCompleteDialog.EXTRA_SUCCESS, 0);
             if(success == 0){
                 mSignature.setVisibility(View.GONE);
-                mPayment.setVisibility(View.GONE);
+                mReceipt.setVisibility(View.GONE);
             }
             else if(success == 1){
                 mSignature.setVisibility(View.VISIBLE);
@@ -251,8 +267,13 @@ public class AddSessionFragment extends Fragment {
                         mSigWidth = mSignature.getWidth();
                         mSigHeight = mSignature.getHeight();
                         mSigFile = SessionListManager.get(getActivity()).getPhotoFile(mSession);
-                        updateSignatureView(mSigWidth, mSigHeight);
+                        Picasso.with(getActivity()).invalidate(mSigFile);
+                        Picasso.with(getActivity())
+                                .load(mSigFile)
+                                .resize(mSigWidth, mSigHeight)
+                                .into(mSignature);
                         mSignature.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        mReceipt.setVisibility(View.VISIBLE);
                     }
                 });
             }
@@ -265,6 +286,7 @@ public class AddSessionFragment extends Fragment {
         inflater.inflate(R.menu.fragment_add_session, menu);
     }
 
+    @Override
     public boolean onOptionsItemSelected(MenuItem item){
         /* Session Saving and Deleting */
         switch (item.getItemId()){
@@ -274,31 +296,16 @@ public class AddSessionFragment extends Fragment {
                     mSession.setCustomerID(mCustomer.getID());
                 }
                 mSession.setDate(InstanceDate);
-                Toast.makeText(getActivity(), R.string.saved_toast, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.session_saved_toast, Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.menu_item_delete_session:
                 SessionListManager.get(getActivity()).deleteSession(mSession);
+                Toast.makeText((getActivity()), R.string.session_deleted_toast, Toast.LENGTH_SHORT).show();
                 getActivity().finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void updatePhotoView(int width, int height){
-        if(mImageFile == null || !mImageFile.exists()){
-            mCustomerImage.setImageDrawable(null);
-        }
-        else {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(mImageFile.getPath(), width, height);
-            mCustomerImage.setImageBitmap(bitmap);
-        }
-    }
-
-    private void updateSignatureView(int width, int height){
-        Bitmap bitmap = PictureUtils.getScaledBitmap(mSigFile.getPath(), width, height);
-        mSignature.setImageBitmap(bitmap);
-        mPayment.setVisibility(View.VISIBLE);
     }
 
     private void updateDate() {

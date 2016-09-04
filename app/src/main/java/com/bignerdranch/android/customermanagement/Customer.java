@@ -4,6 +4,7 @@ import java.util.UUID;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Class for all customer information
  */
 public class Customer {
 

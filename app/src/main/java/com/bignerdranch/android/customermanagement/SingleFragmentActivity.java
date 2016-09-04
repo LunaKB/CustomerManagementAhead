@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 
 /**
  * Created by Chaz-Rae on 8/24/2016.
+ * Coded from Android Programming: The Big Nerd Ranch Guide 2nd Edition
  */
     public abstract class SingleFragmentActivity extends AppCompatActivity{
     protected abstract Fragment createFragment();

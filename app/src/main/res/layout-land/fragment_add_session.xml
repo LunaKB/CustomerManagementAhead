@@ -8,8 +8,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background">
+        android:layout_height="wrap_content" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,6 +24,7 @@
                     android:id="@+id/add_session_imageview"
                     android:layout_width="100dp"
                     android:layout_height="110dp"
+                    android:scaleType="fitXY"
                     android:background="@color/image_background"
                     android:layout_margin="10dp"
                     android:contentDescription="@string/customer_image"/>
@@ -52,7 +52,7 @@
                     android:textSize="20sp"/>
 
                 <Button
-                    android:id="@+id/add_session_change_customer_button"
+                    android:id="@+id/add_session_change_receipt_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#FFFFFF"
@@ -91,7 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:hint="@string/session_description"/>
+            android:hint="@string/session_description_edittext"/>
 
         <Button
             android:id="@+id/add_session_complete_button"
@@ -107,21 +107,20 @@
         <ImageView
             android:id="@+id/add_session_signature_imageview"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="150dp"
+            android:scaleType="fitXY"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:contentDescription="@string/signature_content_description"
             android:visibility="gone"/>
 
         <Button
             android:id="@+id/session_complete_submit_payment_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:layout_marginBottom="10dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
             android:textColor="#FFFFFF"
-            android:text="@string/submit_payment"
+            android:text="@string/submit_receipt"
             android:theme="@style/MyButton"
             android:visibility="gone"/>
     </LinearLayout>

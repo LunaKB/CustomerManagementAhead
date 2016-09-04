@@ -1,6 +1,5 @@
 package com.bignerdranch.android.customermanagement;
 
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -21,6 +20,10 @@ import java.util.UUID;
 
 /**
  * Created by Chaz-Rae on 8/30/2016.
+ * Dialog for user to sign screen.
+ *
+ * Uses Signature Pad
+ *  https://github.com/gcacace/android-signaturepad
  */
 public class SessionCompleteDialog extends DialogFragment{
     private final static String ARG_ID = "id";
