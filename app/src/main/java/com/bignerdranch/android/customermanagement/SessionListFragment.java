@@ -145,8 +145,6 @@ public class SessionListFragment extends Fragment {
                         public void onGlobalLayout() {
                             int width = mCustomerImage.getWidth();
                             int height = mCustomerImage.getHeight();
-                           // Bitmap bitmap = PictureUtils.getScaledBitmap(f.getPath(), width, height);
-                           // mCustomerImage.setImageBitmap(bitmap);
                             Picasso.with(getActivity())
                                     .load(f)
                                     .resize(width, height)
@@ -159,8 +157,6 @@ public class SessionListFragment extends Fragment {
                         public boolean onPreDraw() {
                             int width = mCustomerImage.getWidth();
                             int height = mCustomerImage.getHeight();
-                           // Bitmap bitmap = PictureUtils.getScaledBitmap(f.getPath(), width, height);
-                           // mCustomerImage.setImageBitmap(bitmap);
                             Picasso.with(getActivity())
                                     .load(f)
                                     .resize(width, height)
