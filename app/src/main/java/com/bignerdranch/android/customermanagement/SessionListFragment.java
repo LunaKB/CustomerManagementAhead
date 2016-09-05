@@ -36,6 +36,28 @@ public class SessionListFragment extends Fragment {
     private static final String DIALOG_LOGOUT = "logout";
     private RecyclerView mSessionRecyclerView;
     private SessionAdapter mAdapter;
+    private Callbacks mCallbacks;
+    public static SessionAdapter sAdapter;
+    public static RecyclerView sRecyclerView;
+
+    /**
+     * Required interface for hosting activities
+     */
+    public interface Callbacks{
+        void onSessionSelected(Session session);
+    }
+
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
+    }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        mCallbacks = null;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -49,6 +71,7 @@ public class SessionListFragment extends Fragment {
 
         mSessionRecyclerView = (RecyclerView)v.findViewById(R.id.session_recycler_view);
         mSessionRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        sRecyclerView = mSessionRecyclerView;
 
         updateUI();
 
@@ -73,8 +96,8 @@ public class SessionListFragment extends Fragment {
             case R.id.menu_item_new_session:
                 Session session = new Session();
                 SessionListManager.get(getActivity()).addSession(session);
-                Intent intent = AddSessionPagerActivity.newIntent(getActivity(), session.getId());
-                startActivity(intent);
+                updateUI();
+                mCallbacks.onSessionSelected(session);
                 return true;
             case R.id.menu_item_log_out:
                 FragmentManager fragmentManager = getFragmentManager();
@@ -101,17 +124,20 @@ public class SessionListFragment extends Fragment {
         }
     }
 
-    private void updateUI(){
+    public void updateUI(){
         SessionListManager sessionListManager = SessionListManager.get(getActivity());
         List<Session> sessions = sessionListManager.getSessions();
 
         if(mAdapter == null) {
             mAdapter = new SessionAdapter(sessions);
             mSessionRecyclerView.setAdapter(mAdapter);
+            sRecyclerView = mSessionRecyclerView;
+            sAdapter = mAdapter;
         }
         else{
             mAdapter.setSessions(sessions);
             mAdapter.notifyDataSetChanged();
+            sAdapter = mAdapter;
         }
     }
 
@@ -173,12 +199,11 @@ public class SessionListFragment extends Fragment {
 
         @Override
         public void onClick(View v){
-            Intent i = AddSessionPagerActivity.newIntent(getActivity(), mSession.getId());
-            startActivity(i);
+            mCallbacks.onSessionSelected(mSession);
         }
     }
 
-    private class SessionAdapter extends RecyclerView.Adapter<SessionHolder>{
+    public class SessionAdapter extends RecyclerView.Adapter<SessionHolder>{
         private List<Session> mSessions;
 
         public SessionAdapter(List<Session> sessions){

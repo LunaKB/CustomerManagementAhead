@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -51,6 +53,7 @@ public class AddSessionFragment extends Fragment {
     private static final int REQUEST_SIG = 4;
     private Session mSession;
     private Customer mCustomer;
+    private Callbacks mCallbacks;
 
     /* Customer Info */
     private ImageView mCustomerImage;
@@ -73,6 +76,25 @@ public class AddSessionFragment extends Fragment {
     private int mSigWidth;
     private int mSigHeight;
     private Button mReceipt;
+
+    /**
+     * Required interface for hosting activities
+     */
+    public interface Callbacks{
+        void onSessionUpdated(Session session);
+    }
+
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
+    }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        mCallbacks = null;
+    }
 
     public static AddSessionFragment newInstance(UUID sessionId){
         Bundle args = new Bundle();
@@ -189,7 +211,6 @@ public class AddSessionFragment extends Fragment {
         mCompleteSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSignature.setVisibility(View.GONE);
                 mReceipt.setVisibility(View.GONE);
 
                 FragmentManager fragmentManager = getFragmentManager();
@@ -201,8 +222,32 @@ public class AddSessionFragment extends Fragment {
         });
 
         mSignature = (ImageView)v.findViewById(R.id.add_session_signature_imageview);
+        final ViewTreeObserver sigObserver = mSignature.getViewTreeObserver();
+        sigObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mSigFile = SessionListManager.get(getActivity()).getPhotoFile(mSession);
+                mSigWidth = mSignature.getWidth();
+                mSigHeight = mSignature.getHeight();
+                try {
+                    Picasso.with(getActivity()).invalidate(mSigFile);
+                    Picasso.with(getActivity())
+                            .load(mSigFile)
+                            .resize(mSigWidth, mSigHeight)
+                            .into(mSignature);
+
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                mSignature.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
 
         mReceipt = (Button)v.findViewById(R.id.session_complete_submit_receipt_button);
+        if(mSigFile.exists()){
+            mReceipt.setVisibility(View.VISIBLE);
+        }
         mReceipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,12 +298,13 @@ public class AddSessionFragment extends Fragment {
             updateTime();
         }
         else if(requestCode == REQUEST_SIG){
-            int success = (int)data.getIntExtra(SessionCompleteDialog.EXTRA_SUCCESS, 0);
+            int success = data.getIntExtra(SessionCompleteDialog.EXTRA_SUCCESS, 0);
             if(success == 0){
                 mSignature.setVisibility(View.GONE);
                 mReceipt.setVisibility(View.GONE);
             }
             else if(success == 1){
+                mSignature.setVisibility(View.GONE);
                 mSignature.setVisibility(View.VISIBLE);
                 final ViewTreeObserver sigObserver = mSignature.getViewTreeObserver();
                 sigObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -297,14 +343,43 @@ public class AddSessionFragment extends Fragment {
                 }
                 mSession.setDate(InstanceDate);
                 Toast.makeText(getActivity(), R.string.session_saved_toast, Toast.LENGTH_SHORT).show();
+                updateSession();
                 return true;
             case R.id.menu_item_delete_session:
-                SessionListManager.get(getActivity()).deleteSession(mSession);
+                SessionListManager.get(getActivity()).deleteSession(mSession, mSigFile);
                 Toast.makeText((getActivity()), R.string.session_deleted_toast, Toast.LENGTH_SHORT).show();
-                getActivity().finish();
+
+                if(!SessionListActivity.getHasDetail()) {
+                    getActivity().finish();
+                }
+                else{
+                    onSessionDeleted(SessionListFragment.sAdapter, SessionListFragment.sRecyclerView);
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .remove(this)
+                            .commit();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void updateSession(){
+        SessionListManager.get(getActivity()).updateSession(mSession);
+        mCallbacks.onSessionUpdated(mSession);
+    }
+
+    private void onSessionDeleted(SessionListFragment.SessionAdapter adapter, RecyclerView recyclerView){
+        SessionListManager sessionListManager = SessionListManager.get(getActivity());
+        List<Session> sessions = sessionListManager.getSessions();
+
+        if(adapter == null) {
+            adapter = new SessionListFragment(). new SessionAdapter(sessions);
+            recyclerView.setAdapter(adapter);
+        }
+        else{
+            adapter.setSessions(sessions);
+            adapter.notifyDataSetChanged();
         }
     }
 

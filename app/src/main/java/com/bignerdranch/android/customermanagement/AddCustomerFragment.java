@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
 
 /*
@@ -39,6 +41,7 @@ public class AddCustomerFragment extends Fragment {
     private static final int REQUEST_PHOTO = 0;
     private static final int REQUEST_IMAGE_DIALOG = 1;
     private Customer mCustomer;
+    private Callbacks mCallbacks;
 
     /* Text Fields */
     private EditText mCustomerName;
@@ -51,6 +54,25 @@ public class AddCustomerFragment extends Fragment {
     private int mHeight;
     private ImageButton mImageButton;
     private File mImageFile;
+
+    /**
+    * Required interface for hosting activities
+    */
+    public interface Callbacks{
+        void onCustomerUpdated(Customer customer);
+    }
+
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
+    }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        mCallbacks = null;
+    }
 
     public static AddCustomerFragment newInstance(UUID customerId){
         Bundle args = new Bundle();
@@ -148,15 +170,19 @@ public class AddCustomerFragment extends Fragment {
             return;
         }
 
-        if(requestCode == REQUEST_PHOTO){
-            Picasso.with(getActivity()).invalidate(mImageFile);
-            Picasso.with(getActivity())
-                    .load(mImageFile)
-                    .resize(mWidth, mHeight)
-                    .into(mCustomerImage);
-        }
-        else if(requestCode == REQUEST_IMAGE_DIALOG){
+        try {
+            if (requestCode == REQUEST_PHOTO) {
+              Picasso.with(getActivity()).invalidate(mImageFile);
+                Picasso.with(getActivity())
+                        .load(mImageFile)
+                        .resize(mWidth, mHeight)
+                        .into(mCustomerImage);
+            } else if (requestCode == REQUEST_IMAGE_DIALOG) {
             /* Do nothing */
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -166,6 +192,7 @@ public class AddCustomerFragment extends Fragment {
         inflater.inflate(R.menu.fragment_add_customer, menu);
     }
 
+    @Override
     public boolean onOptionsItemSelected(MenuItem item){
         /* Customer Saving and Deleting */
         switch (item.getItemId()){
@@ -174,14 +201,43 @@ public class AddCustomerFragment extends Fragment {
                 mCustomer.setBillingInfo(mBillingInfo.getText().toString());
                 mCustomer.setSessionLimit(Integer.valueOf(mSessions.getText().toString()));
                 Toast.makeText(getActivity(), R.string.saved_toast, Toast.LENGTH_SHORT).show();
+                updateCustomer();
                 return true;
             case R.id.menu_item_delete_customer:
                 CustomerListManager.get(getActivity()).deleteCustomer(mCustomer, mImageFile);
                 Toast.makeText((getActivity()), R.string.deleted_toast, Toast.LENGTH_SHORT).show();
-                getActivity().finish();
+                if(!CustomerListActivity.getHasDetail()) {
+                    getActivity().finish();
+                }
+                else{
+                    onCustomerDeleted(CustomerListFragment.sAdapter, CustomerListFragment.sRecyclerView);
+                    updateCustomer();
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .remove(this)
+                            .commit();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void updateCustomer(){
+        CustomerListManager.get(getActivity()).updateCustomer(mCustomer);
+        mCallbacks.onCustomerUpdated(mCustomer);
+    }
+
+    private void onCustomerDeleted(CustomerListFragment.CustomerAdapter adapter, RecyclerView recyclerView){
+        CustomerListManager customerListManager = CustomerListManager.get(getActivity());
+        List<Customer> customers = customerListManager.getCustomers();
+
+        if(adapter == null) {
+            adapter = new CustomerListFragment(). new CustomerAdapter(customers);
+            recyclerView.setAdapter(adapter);
+        }
+        else{
+            adapter.setCustomers(customers);
+            adapter.notifyDataSetChanged();
         }
     }
 }

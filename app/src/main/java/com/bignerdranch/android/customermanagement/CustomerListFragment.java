@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.LoaderManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -36,6 +37,28 @@ public class CustomerListFragment extends Fragment {
     private static final String DIALOG_LOGOUT = "logout";
     private RecyclerView mCustomerRecyclerView;
     private CustomerAdapter mAdapter;
+    private Callbacks mCallbacks;
+    public static CustomerAdapter sAdapter;
+    public static RecyclerView sRecyclerView;
+
+    /**
+    * Required interface for hosting activities
+    */
+    public interface Callbacks{
+        void onCustomerSelected(Customer customer);
+    }
+
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
+    }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        mCallbacks = null;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -49,6 +72,7 @@ public class CustomerListFragment extends Fragment {
 
         mCustomerRecyclerView = (RecyclerView)v.findViewById(R.id.customer_recycler_view);
         mCustomerRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        sRecyclerView = mCustomerRecyclerView;
 
         updateUI();
 
@@ -73,8 +97,8 @@ public class CustomerListFragment extends Fragment {
             case R.id.menu_item_new_customer:
                 Customer customer = new Customer();
                 CustomerListManager.get(getActivity()).addCustomer(customer);
-                Intent intent = AddCustomerPagerActivity.newIntent(getActivity(), customer.getID());
-                startActivity(intent);
+                updateUI();
+                mCallbacks.onCustomerSelected(customer);
                 return true;
             case R.id.menu_item_log_out:
                 FragmentManager fragmentManager = getFragmentManager();
@@ -101,17 +125,20 @@ public class CustomerListFragment extends Fragment {
         }
     }
 
-    private void updateUI(){
+    public void updateUI(){
         CustomerListManager customerListManager = CustomerListManager.get(getActivity());
         List<Customer> customers = customerListManager.getCustomers();
 
         if(mAdapter == null) {
             mAdapter = new CustomerAdapter(customers);
             mCustomerRecyclerView.setAdapter(mAdapter);
+            sRecyclerView = mCustomerRecyclerView;
+            sAdapter = mAdapter;
         }
         else{
             mAdapter.setCustomers(customers);
             mAdapter.notifyDataSetChanged();
+            sAdapter = mAdapter;
         }
     }
 
@@ -172,12 +199,11 @@ public class CustomerListFragment extends Fragment {
 
         @Override
         public void onClick(View v){
-            Intent i = AddCustomerPagerActivity.newIntent(getActivity(), mCustomer.getID());
-            startActivity(i);
+            mCallbacks.onCustomerSelected(mCustomer);
         }
     }
 
-    private class CustomerAdapter extends RecyclerView.Adapter<CustomerHolder>{
+    public class CustomerAdapter extends RecyclerView.Adapter<CustomerHolder>{
         private List<Customer> mCustomers;
 
         public CustomerAdapter(List<Customer> customers){

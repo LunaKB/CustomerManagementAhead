@@ -19,12 +19,19 @@ import java.util.UUID;
  *
  * Coded from Android Programming: The Big Nerd Ranch Guide 2nd Edition
  */
-public class AddSessionPagerActivity extends AppCompatActivity {
+public class AddSessionPagerActivity extends AppCompatActivity
+        implements AddSessionFragment.Callbacks{
     private static final String EXTRA_SESSION_ID =
             "com.bignerdranch.android.customermanagement.session_id";
 
     private ViewPager mViewPager;
     private List<Session> mSessions;
+
+    @Override
+    public void onSessionUpdated(Session session){
+
+    }
+
 
     public static Intent newIntent(Context packageContext, UUID sessionId){
         Intent intent = new Intent(packageContext, AddSessionPagerActivity.class);

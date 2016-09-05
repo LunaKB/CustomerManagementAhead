@@ -43,9 +43,12 @@ public class SessionListManager {
         mDatabase.insert(SessionTable.NAME, null, values);
     }
 
-    public void deleteSession(Session session){
+    public void deleteSession(Session session, File file){
         mDatabase.delete(SessionTable.NAME, SessionTable.Cols.SESSION_UUID + " = ?",
                 new String[] {session.getId().toString()});
+        if(file.exists()){
+            file.delete();
+        }
     }
 
     public void updateSession(Session session){

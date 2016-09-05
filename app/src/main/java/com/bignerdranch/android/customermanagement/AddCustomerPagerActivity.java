@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,12 +20,18 @@ import java.util.UUID;
  *
  * Coded from Android Programming: The Big Nerd Ranch Guide 2nd Edition
  */
-public class AddCustomerPagerActivity extends AppCompatActivity{
+public class AddCustomerPagerActivity extends AppCompatActivity
+        implements AddCustomerFragment.Callbacks{
     private static final String EXTRA_CUSTOMER_ID =
             "com.bignerdranch.android.customermanagement.customer_id";
 
     private ViewPager mViewPager;
     private List<Customer> mCustomers;
+
+    @Override
+    public void onCustomerUpdated(Customer customer){
+
+    }
 
     public static Intent newIntent(Context packageContext, UUID customerId){
         Intent intent = new Intent(packageContext, AddCustomerPagerActivity.class);

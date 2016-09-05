@@ -67,6 +67,7 @@
     <string name="time_picker_dialog">Set the Time</string>
 
     <!-- Session Complete -->
+    <string name="customer_signature">Customer Signature</string>
     <string name="submit_receipt">Submit Receipt</string>
     <string name="session_report">
         Customer Name:%1$s\nBilling Address\n\t%2$s\nThe session was completed on %3$s.\nSession Summary:\n%4$s

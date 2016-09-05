@@ -99,21 +99,28 @@
             android:id="@+id/add_session_complete_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_margin="10dp"
             android:textColor="#FFFFFF"
             android:text="@string/complete_session_button"
             android:theme="@style/MyButton"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/customer_signature"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            style="?android:listSeparatorTextViewStyle"/>
 
         <ImageView
             android:id="@+id/add_session_signature_imageview"
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:scaleType="center"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:contentDescription="@string/signature_content_description"
-            android:visibility="gone"/>
+            android:contentDescription="@string/signature_content_description" />
 
         <Button
             android:id="@+id/session_complete_submit_receipt_button"
