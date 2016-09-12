@@ -2,6 +2,7 @@ package com.bignerdranch.android.customermanagement;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -11,31 +12,10 @@ import android.widget.LinearLayout;
  * Activity to choose either CustomerListActivity
  * or SessionListActivity.
  */
-public class MenuActivity extends AppCompatActivity {
-    private LinearLayout mSessions;
-    private LinearLayout mCustomers;
+public class MenuActivity extends SingleFragmentActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
-
-        mSessions = (LinearLayout) findViewById(R.id.menu_button_sessions);
-        mSessions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MenuActivity.this, SessionListActivity.class);
-                startActivity(i);
-            }
-        });
-
-        mCustomers = (LinearLayout) findViewById(R.id.menu_button_customers);
-        mCustomers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MenuActivity.this, CustomerListActivity.class);
-                startActivity(i);
-            }
-        });
+    protected Fragment createFragment() {
+        return new MenuFragment();
     }
 }
