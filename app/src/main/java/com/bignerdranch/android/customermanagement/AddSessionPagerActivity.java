@@ -42,10 +42,10 @@ public class AddSessionPagerActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_session_pager);
+        setContentView(R.layout.activity_viewpager);
         UUID sessionId = (UUID) getIntent().getSerializableExtra(EXTRA_SESSION_ID);
 
-        mViewPager = (ViewPager)findViewById(R.id.activity_session_pager_viewpager);
+        mViewPager = (ViewPager)findViewById(R.id.activity_viewpager);
         mSessions = SessionListManager.get(this).getSessions();
 
         FragmentManager fragmentManager = getSupportFragmentManager();

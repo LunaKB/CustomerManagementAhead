@@ -42,10 +42,10 @@ public class AddCustomerPagerActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_customer_pager);
+        setContentView(R.layout.activity_viewpager);
         UUID customerId = (UUID) getIntent().getSerializableExtra(EXTRA_CUSTOMER_ID);
 
-        mViewPager = (ViewPager)findViewById(R.id.activity_customer_pager_viewpager);
+        mViewPager = (ViewPager)findViewById(R.id.activity_viewpager);
         mCustomers = CustomerListManager.get(this).getCustomers();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
